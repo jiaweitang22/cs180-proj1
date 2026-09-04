@@ -113,11 +113,25 @@ h2 { font-size: clamp(36px, 4.2vw, 50px); line-height: 1.14; }
 .offset-line { display: flex; flex-wrap: wrap; gap: 6px 20px; color: var(--muted); font-size: 16px; font-weight: 550; font-variant-numeric: tabular-nums; }
 .comparison-header .offset-line { margin-top: 8px; }
 
-.pyramid-explainer { width: min(900px, 100%); margin: 0 auto 84px; }
+.pyramid-copy { width: min(720px, 100%); margin: 0 auto 56px; }
+.pyramid-copy p + p { margin-top: 22px; }
+.pyramid-copy p { color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 19px; line-height: 1.65; }
+.pyramid-copy code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.84em;
+}
+.walkthrough-wrap { overflow-x: auto; }
+.pyramid-explainer { width: min(900px, 100%); margin: 0 auto 64px; }
 .pyramid-explainer ol { display: grid; grid-template-columns: 1fr 1fr; gap: 0 42px; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
 .pyramid-explainer li { display: grid; grid-template-columns: 110px 1fr; gap: 18px; padding: 24px 0; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 16px; }
 .pyramid-explainer li span { color: var(--ink); font-weight: 700; }
 .pyramid-explainer pre { margin: 30px 0 0; padding: 34px 40px; overflow-x: auto; background: var(--dark); color: #e9eee8; border-radius: 0; font-size: 15px; line-height: 1.9; }
+.pyramid-example { width: min(900px, 100%); margin: 0 auto 84px; }
+.pyramid-example > p { width: min(720px, 100%); margin: 0 auto 28px; color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 19px; line-height: 1.65; }
+.walkthrough { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+.walkthrough th, .walkthrough td { padding: 12px 0; border-bottom: 1px solid var(--line); text-align: left; }
+.walkthrough th { color: var(--muted); font-size: 12px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; border-bottom: 1px solid var(--ink); }
+.walkthrough td:last-child { font-weight: 650; }
 .subsection-heading { display: flex; justify-content: space-between; gap: 40px; align-items: end; margin-bottom: 28px; }
 .subsection-heading h3 { margin-top: 5px; font-size: 34px; }
 .subsection-heading > p { max-width: 420px; color: var(--muted); font-size: 16px; text-align: right; }
@@ -208,9 +222,16 @@ h2 { font-size: clamp(36px, 4.2vw, 50px); line-height: 1.14; }
   .comparison { grid-template-columns: 90pt 1fr; gap: 10pt; break-inside: avoid; }
   .comparison h3 { font-size: 14pt; }
   .comparison-images { gap: 7pt; }
-  .pyramid-explainer { gap: 18pt; margin-bottom: 24pt; }
+  .pyramid-copy { margin-bottom: 16pt; }
+  .pyramid-copy p { font-size: 9pt; }
+  .pyramid-copy p + p { margin-top: 8pt; }
+  .pyramid-explainer { gap: 18pt; margin-bottom: 16pt; }
   .pyramid-explainer li { grid-template-columns: 52pt 1fr; gap: 6pt; padding: 6pt 0; font-size: 8pt; }
   .pyramid-explainer pre { padding: 12pt; font-size: 7.5pt; line-height: 1.55; }
+  .pyramid-example { margin-bottom: 18pt; }
+  .pyramid-example > p { margin-bottom: 10pt; font-size: 9pt; }
+  .walkthrough { font-size: 8pt; }
+  .walkthrough th, .walkthrough td { padding: 4pt 0; }
   .results-grid { grid-template-columns: repeat(3, 1fr); gap: 16pt 8pt; }
   .result-figure, .collection-grid > article, .failure-analysis { break-inside: avoid; }
   .result-figure figcaption { grid-template-columns: 1fr; gap: 2pt; }

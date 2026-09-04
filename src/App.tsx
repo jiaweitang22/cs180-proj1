@@ -173,8 +173,35 @@ export default function App() {
         <div className="section-heading split-heading">
           <div><p className="kicker">03 · High-resolution alignment</p><h2>Coarse-to-fine pyramid</h2></div>
           <p>
-            Full-resolution TIFFs require much larger displacements, making a wide exhaustive search too expensive.
-            The pyramid finds a rough shift cheaply at low resolution and uses it to guide small searches at finer scales.
+            A JPEG can wander ±15 pixels. A TIFF often needs tens or hundreds. I search a thumbnail first, then zoom
+            back in.
+          </p>
+        </div>
+
+        <div className="pyramid-copy">
+          <p>
+            On <em>church.tif</em>, red sits 58 pixels below blue. Checking every shift that large on a 3200 × 3600
+            image is a slog: a ±60 window is more than 14,000 comparisons at full resolution. The workaround is
+            familiar from looking at a photo on your phone. Find the alignment on a tiny copy, then only make small
+            corrections as the image gets sharp again.
+          </p>
+          <p>
+            I build that stack of copies myself by shrinking each channel in half, with a little blur so the downsample
+            stays clean, until the long side is at most 200 pixels. Church bottoms out at a 100 × 114 thumbnail—six
+            scales in all. At every scale I use the same L2 / NCC matcher as the JPEGs, but only on the interior 80%.
+            The glass-plate borders are high-contrast frames that do not agree across blue, green, and red, and rolling
+            a channel wraps leftover pixels onto that edge. Scoring the middle of the image ignores both.
+          </p>
+          <p>
+            L2 is picky about brightness. NCC subtracts the mean first, so it cares about structure. That helps here:
+            green and red are different color filters, not two copies of the same exposure. On cathedral, monastery,
+            and tobolsk both metrics found the same offsets, so the TIFF results below all use NCC on raw pixels.
+          </p>
+          <p>
+            The loop is short. On the thumbnail I look ±15 pixels around (0, 0). One pixel there is 32 pixels on the
+            original, so that small window already covers a large shift. Then I go one level sharper, double the
+            offset, and only look ±2 around the prediction. Repeat until full resolution. Every plate uses that same
+            recipe.
           </p>
         </div>
 
@@ -188,9 +215,41 @@ export default function App() {
           <pre aria-label="Image pyramid pseudocode"><code>{`offset = (0, 0)\nfor level in coarsest → finest:\n    if not coarsest:\n        offset = 2 × offset\n    window = 15 if coarsest else 2\n    offset = search(level, center=offset, window)`}</code></pre>
         </div>
 
+        <div className="pyramid-example">
+          <div className="subsection-heading">
+            <div><p className="kicker">Worked example</p><h3>Church, red → blue</h3></div>
+            <p>Offsets below are (x, y), matching every other figure on this page.</p>
+          </div>
+          <p>
+            On the thumbnail, red → blue wins at (0, 2). Doubling that guess and refining ±2 at each sharper level
+            lands on (−4, 58)—the offset on the figure. Green does the same walk from (0, 1) to (4, 25).
+          </p>
+          <div className="walkthrough-wrap">
+          <table className="walkthrough">
+            <thead>
+              <tr>
+                <th>Level</th>
+                <th>Size</th>
+                <th>Incoming guess</th>
+                <th>Window</th>
+                <th>NCC winner</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>5, coarsest</td><td>100 × 114</td><td>(0, 0)</td><td>±15</td><td>(0, 2)</td></tr>
+              <tr><td>4</td><td>200 × 227</td><td>(0, 4)</td><td>±2</td><td>(0, 4)</td></tr>
+              <tr><td>3</td><td>400 × 454</td><td>(0, 8)</td><td>±2</td><td>(−1, 7)</td></tr>
+              <tr><td>2</td><td>800 × 908</td><td>(−2, 14)</td><td>±2</td><td>(−1, 15)</td></tr>
+              <tr><td>1</td><td>1601 × 1817</td><td>(−2, 30)</td><td>±2</td><td>(−2, 29)</td></tr>
+              <tr><td>0, full</td><td>3202 × 3634</td><td>(−4, 58)</td><td>±2</td><td>(−4, 58)</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+
         <div className="subsection-heading">
           <div><p className="kicker">Course images</p><h3>13 successful alignments</h3></div>
-          <p>All results use the same pyramid parameters and NCC on raw pixel intensities.</p>
+          <p>Same pyramid parameters on every plate. NCC on raw pixel intensities, after L2 and NCC agreed on the JPEGs.</p>
         </div>
         <div className="results-grid">
           {alignedResults.map((result) => <ResultFigure result={result} folder="pyramid" key={result.file} />)}
