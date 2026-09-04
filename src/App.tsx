@@ -68,7 +68,7 @@ export default function App() {
   return (
     <main id="top">
       <header className="site-header">
-        <a className="wordmark" href="#top">Jiawei Tang <span>/ CS 180</span></a>
+        <a className="wordmark" href="#top">CS 180 <span>· Project 1</span></a>
         <nav aria-label="Project sections">
           <a href="#method">Method</a>
           <a href="#single-scale">Single scale</a>
@@ -80,11 +80,12 @@ export default function App() {
       <section className="hero shell">
         <div className="hero-copy">
           <p className="kicker">Project 1 · Fall 2026</p>
-          <h1>Images of the<br />Russian Empire</h1>
+          <h1>Images of the Russian Empire</h1>
           <p className="summary">
             Reconstructing color photographs from Prokudin-Gorskii’s glass plates through exhaustive channel
             alignment and a coarse-to-fine image pyramid.
           </p>
+          <p className="byline">Jiawei Tang · CS 180: Intro to Computer Vision and Computational Photography</p>
         </div>
         <figure className="hero-figure">
           <img src={asset('/images/pyramid/church_ncc.jpg')} alt="Reconstructed color photograph of a church beside a river" />
