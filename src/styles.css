@@ -113,13 +113,14 @@ h2 { font-size: clamp(36px, 4.2vw, 50px); line-height: 1.14; }
 .offset-line { display: flex; flex-wrap: wrap; gap: 6px 20px; color: var(--muted); font-size: 16px; font-weight: 550; font-variant-numeric: tabular-nums; }
 .comparison-header .offset-line { margin-top: 8px; }
 
-.pyramid-copy { width: min(720px, 100%); margin: 0 auto 56px; }
-.pyramid-copy p + p { margin-top: 22px; }
-.pyramid-copy p { color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 19px; line-height: 1.65; }
+.single-copy, .pyramid-copy { width: min(720px, 100%); margin: 0 auto 44px; }
+.single-copy p + p, .pyramid-copy p + p { margin-top: 22px; }
+.single-copy p, .pyramid-copy p { color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 19px; line-height: 1.65; }
 .pyramid-copy code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.84em;
 }
+.single-pseudocode { width: min(900px, 100%); margin: 0 auto 72px; padding: 34px 40px; overflow-x: auto; background: var(--dark); color: #e9eee8; font-size: 15px; line-height: 1.9; }
 .walkthrough-wrap { overflow-x: auto; }
 .pyramid-explainer { width: min(900px, 100%); margin: 0 auto 64px; }
 .pyramid-explainer ol { display: grid; grid-template-columns: 1fr 1fr; gap: 0 42px; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
@@ -167,6 +168,7 @@ h2 { font-size: clamp(36px, 4.2vw, 50px); line-height: 1.14; }
   .summary { max-width: 600px; }
   .section { padding: 76px 0; }
   .pipeline li { grid-template-columns: 42px 130px 1fr; gap: 16px; }
+  .single-pseudocode { margin-bottom: 60px; }
   .pyramid-explainer { margin-bottom: 76px; }
   .pyramid-explainer ol { grid-template-columns: 1fr; }
 }
@@ -222,9 +224,10 @@ h2 { font-size: clamp(36px, 4.2vw, 50px); line-height: 1.14; }
   .comparison { grid-template-columns: 90pt 1fr; gap: 10pt; break-inside: avoid; }
   .comparison h3 { font-size: 14pt; }
   .comparison-images { gap: 7pt; }
-  .pyramid-copy { margin-bottom: 16pt; }
-  .pyramid-copy p { font-size: 9pt; }
-  .pyramid-copy p + p { margin-top: 8pt; }
+  .single-copy, .pyramid-copy { margin-bottom: 16pt; }
+  .single-copy p, .pyramid-copy p { font-size: 9pt; }
+  .single-copy p + p, .pyramid-copy p + p { margin-top: 8pt; }
+  .single-pseudocode { margin-bottom: 18pt; padding: 12pt; font-size: 7.5pt; line-height: 1.55; }
   .pyramid-explainer { gap: 18pt; margin-bottom: 16pt; }
   .pyramid-explainer li { grid-template-columns: 52pt 1fr; gap: 6pt; padding: 6pt 0; font-size: 8pt; }
   .pyramid-explainer pre { padding: 12pt; font-size: 7.5pt; line-height: 1.55; }

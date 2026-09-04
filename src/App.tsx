@@ -142,10 +142,36 @@ export default function App() {
         <div className="section-heading split-heading">
           <div><p className="kicker">02 · Low-resolution alignment</p><h2>Exhaustive single-scale search</h2></div>
           <p>
-            For each JPEG, I test every displacement in a 31 × 31 window from −15 to +15 pixels along both axes.
-            L2 and NCC independently recover the same offsets on all three images.
+            The smaller JPEGs make it practical to test every possible integer translation in a fixed search window.
+            This gives a direct baseline before introducing the image pyramid.
           </p>
         </div>
+
+        <div className="single-copy">
+          <p>
+            I first divide each glass-plate scan into three equal vertical sections. The sections are ordered blue,
+            green, and red from top to bottom. Blue remains fixed as the reference, while green and red are aligned to
+            it independently; this produces one green-to-blue offset and one red-to-blue offset.
+          </p>
+          <p>
+            For each moving channel, I test every <strong>(x, y)</strong> translation from −15 through +15 in both
+            directions—a 31 × 31 grid, or 961 candidates. I shift the channel with a circular array roll and compare
+            it with blue using only the interior 80% of both images. Excluding the outer 10% on every side reduces the
+            influence of the glass-plate borders and of pixels wrapped around by the shift.
+          </p>
+          <p>
+            Each candidate is evaluated with either L2 or mean-centered NCC. L2 selects the translation with the
+            smallest pixel-wise distance; NCC selects the one with the largest normalized correlation. After finding
+            the best green and red offsets, I apply both shifts, stack the channels in RGB order, remove regions created
+            by circular wraparound, and apply the fixed display trim described above.
+          </p>
+          <p>
+            Both metrics recover exactly the same offsets for cathedral, monastery, and tobolsk. The six outputs below
+            show no visible red or cyan ghosting, so the exhaustive search succeeds on all three low-resolution images.
+          </p>
+        </div>
+
+        <pre className="single-pseudocode" aria-label="Single-scale alignment pseudocode"><code>{`blue, green, red = split(plate)\n\nfor channel in [green, red]:\n    for x in −15 … 15:\n        for y in −15 … 15:\n            shifted = shift(channel, x, y)\n            score = metric(interior(shifted), interior(blue))\n    keep the offset with minimum L2 or maximum NCC\n\ncolor = stack(shifted_red, shifted_green, blue)`}</code></pre>
 
         <div className="comparison-list">
           {singleScale.map((result, index) => (
@@ -173,8 +199,9 @@ export default function App() {
         <div className="section-heading split-heading">
           <div><p className="kicker">03 · High-resolution alignment</p><h2>Coarse-to-fine pyramid</h2></div>
           <p>
-            A JPEG can wander ±15 pixels. A TIFF often needs tens or hundreds. I search a thumbnail first, then zoom
-            back in.
+            The JPEG search tests offsets within ±15 pixels, while a TIFF can require shifts of tens or hundreds of
+            pixels. I therefore estimate the translation on a thumbnail first, then refine it while returning to full
+            resolution.
           </p>
         </div>
 
@@ -186,16 +213,17 @@ export default function App() {
             corrections as the image gets sharp again.
           </p>
           <p>
-            I build that stack of copies myself by shrinking each channel in half, with a little blur so the downsample
-            stays clean, until the long side is at most 200 pixels. Church bottoms out at a 100 × 114 thumbnail—six
-            scales in all. At every scale I use the same L2 / NCC matcher as the JPEGs, but only on the interior 80%.
+            I build that stack of copies myself by shrinking each channel in half with anti-aliasing until the long side
+            is at most 200 pixels. Church bottoms out at a 100 × 114 thumbnail—six scales in all. The same matcher
+            implementation supports either L2 or NCC at every scale, and scores only the interior 80%.
             The glass-plate borders are high-contrast frames that do not agree across blue, green, and red, and rolling
-            a channel wraps leftover pixels onto that edge. Scoring the middle of the image ignores both.
+            a channel wraps leftover pixels onto that edge. Scoring the middle reduces the influence of both.
           </p>
           <p>
-            L2 is picky about brightness. NCC subtracts the mean first, so it cares about structure. That helps here:
-            green and red are different color filters, not two copies of the same exposure. On cathedral, monastery,
-            and tobolsk both metrics found the same offsets, so the TIFF results below all use NCC on raw pixels.
+            L2 is sensitive to brightness differences. NCC subtracts the mean first, so it emphasizes structural
+            agreement instead. That helps because green and red are different filtered exposures, not two identical
+            copies of an image. Since both metrics agree on the JPEGs, all displayed pyramid results use mean-centered
+            NCC computed directly on pixel intensities.
           </p>
           <p>
             The loop is short. On the thumbnail I look ±15 pixels around (0, 0). One pixel there is 32 pixels on the
@@ -248,8 +276,8 @@ export default function App() {
         </div>
 
         <div className="subsection-heading">
-          <div><p className="kicker">Course images</p><h3>13 successful alignments</h3></div>
-          <p>Same pyramid parameters on every plate. NCC on raw pixel intensities, after L2 and NCC agreed on the JPEGs.</p>
+          <div><p className="kicker">Course images</p><h3>All 14 provided images</h3></div>
+          <p>Thirteen align successfully with the same parameters; Emir is the single failure discussed below.</p>
         </div>
         <div className="results-grid">
           {alignedResults.map((result) => <ResultFigure result={result} folder="pyramid" key={result.file} />)}
