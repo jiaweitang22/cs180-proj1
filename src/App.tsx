@@ -35,12 +35,8 @@ const extraResults = [
 function Offsets({ green, red }: { green: string; red: string }) {
   return (
     <span className="offsets">
-      <span>
-        <i className="dot green" />G {green}
-      </span>
-      <span>
-        <i className="dot red" />R {red}
-      </span>
+      <span>G {green}</span>
+      <span>R {red}</span>
     </span>
   );
 }
@@ -61,59 +57,54 @@ export default function App() {
       </header>
 
       <section id="top" className="hero shell">
-        <div className="hero-copy">
+        <div>
           <p className="eyebrow">Computational photography · Fall 2026</p>
-          <h1>
-            Images of the
-            <br />
-            Russian Empire
-          </h1>
+          <h1>Images of the Russian Empire</h1>
           <p className="dek">
-            Reconstructing Sergei Prokudin-Gorskii&apos;s century-old glass-plate negatives with exhaustive search and
-            coarse-to-fine alignment.
+            Colorizing Sergei Prokudin-Gorskii&apos;s glass-plate negatives by aligning the green and red exposures to
+            blue with exhaustive search, then a coarse-to-fine image pyramid.
           </p>
         </div>
         <figure className="hero-image">
           <img src={asset('/images/pyramid/cathedral_ncc.jpg')} alt="Color reconstruction of a cathedral on a hillside" />
           <figcaption>
             <span>Cathedral</span>
-            <span>NCC pyramid alignment</span>
+            <span>NCC pyramid</span>
           </figcaption>
         </figure>
       </section>
 
-      <section id="approach" className="section shell intro-grid">
-        <div>
-          <p className="section-number">01 · Approach</p>
-          <h2>From three exposures to one photograph</h2>
-        </div>
-        <div className="prose lead">
+      <section id="approach" className="section shell">
+        <p className="section-number">01 · Approach</p>
+        <h2>From three exposures to one photograph</h2>
+        <div className="prose">
           <p>
-            Each scan stores blue, green, and red exposures vertically. I split the plate into thirds, use blue as the
-            reference, align green and red with integer translations, and stack the channels in RGB order.
+            Each scan stores blue, green, and red exposures from top to bottom. I split the plate into thirds, treat
+            blue as the reference, search for integer <strong>(x, y)</strong> translations of green and red, and stack
+            the shifted channels in RGB order.
           </p>
           <p>
-            Alignment scores ignore the outer 10% of each channel, where plate borders can dominate the metric. After
-            shifting, I retain the region shared by all three channels and apply a fixed 10% trim for display. Offsets
-            below are reported as <strong>(x, y)</strong> relative to blue.
+            Scores are computed on the interior 80% of each channel so plate borders cannot dominate the metric. After
+            shifting, I keep the overlap shared by all three channels and apply a fixed 10% trim for display. The same
+            parameters are used for every image.
           </p>
         </div>
       </section>
 
       <section id="single-scale" className="section shell">
-        <div className="section-heading">
-          <div>
-            <p className="section-number">02 · Low-resolution JPEGs</p>
-            <h2>Single-scale alignment</h2>
-          </div>
-          <p>Exhaustive search over every integer translation in a ±15-pixel window.</p>
-        </div>
+        <p className="section-number">02 · Low-resolution JPEGs</p>
+        <h2>Single-scale alignment</h2>
+        <p className="lede">
+          On the three JPEG plates I search every integer offset in a ±15-pixel window. L2 and NCC find the same
+          displacements.
+        </p>
         <div className="metric-strip">
           <p>
-            <strong>L2 distance</strong> sums squared pixel differences; the lowest score wins.
+            <strong>L2</strong> is the Euclidean distance between corresponding pixels. The lowest score wins.
           </p>
           <p>
-            <strong>NCC</strong> mean-centers and normalizes both images, then selects the largest dot product.
+            <strong>NCC</strong> mean-centers both images, normalizes them, and takes their dot product. The highest
+            score wins.
           </p>
         </div>
         <div className="single-results">
@@ -124,86 +115,88 @@ export default function App() {
                 <Offsets green={result.green} red={result.red} />
               </div>
               <figure>
-                <img src={asset(`/images/single-scale/${result.slug}_l2.jpg`)} alt={`${result.name} aligned with L2 distance`} />
-                <figcaption>
-                  <strong>L2</strong>
-                </figcaption>
+                <img src={asset(`/images/single-scale/${result.slug}_l2.jpg`)} alt={`${result.name} aligned with L2`} />
+                <figcaption>L2</figcaption>
               </figure>
               <figure>
-                <img
-                  src={asset(`/images/single-scale/${result.slug}_ncc.jpg`)}
-                  alt={`${result.name} aligned with normalized cross-correlation`}
-                />
-                <figcaption>
-                  <strong>NCC</strong>
-                </figcaption>
+                <img src={asset(`/images/single-scale/${result.slug}_ncc.jpg`)} alt={`${result.name} aligned with NCC`} />
+                <figcaption>NCC</figcaption>
               </figure>
             </article>
           ))}
         </div>
       </section>
 
-      <section id="pyramid" className="section pyramid-section">
-        <div className="shell">
-          <div className="section-heading light-heading">
-            <div>
-              <p className="section-number">03 · All provided images</p>
-              <h2>Coarse-to-fine pyramid</h2>
-            </div>
-            <p>Pixel-value NCC at every scale. Thirteen of fourteen images align cleanly.</p>
-          </div>
-          <div className="pyramid-method">
-            <span>½</span>
-            <p>
-              I repeatedly downsample each channel by two with anti-aliasing until its largest dimension is at most 200
-              pixels. At the coarsest level I search ±15 pixels. At each finer level, I double the previous offset and
-              refine it within ±2 pixels.
-            </p>
-          </div>
-          <div className="result-grid">
-            {pyramidResults.map((result) => (
-              <article className={`result-card ${result.status === 'failure' ? 'failed' : ''}`} key={result.file}>
-                <figure>
-                  <img src={asset(`/images/pyramid/${result.file}`)} alt={`${result.name} reconstructed with pyramid alignment`} />
-                </figure>
-                <div className="card-caption">
-                  <div>
-                    <h3>{result.name}</h3>
-                    {result.status === 'failure' && <span className="status">alignment failure</span>}
-                  </div>
-                  <Offsets green={result.green} red={result.red} />
-                </div>
-                {result.status === 'failure' && (
-                  <p className="failure-note">
-                    The emir&apos;s bright blue clothing has very different intensity patterns across channels. Pixel-value
-                    NCC locks the red channel onto a false match instead of the subject&apos;s structure.
-                  </p>
-                )}
-              </article>
-            ))}
-          </div>
+      <section id="pyramid" className="section shell">
+        <p className="section-number">03 · All provided images</p>
+        <h2>Coarse-to-fine pyramid</h2>
+        <p className="lede">
+          Full-size TIFFs need larger displacements than ±15 pixels. I downsample each channel by ½ with anti-aliasing
+          until the longest side is at most 200 pixels, search ±15 at that coarsest level, then double the offset and
+          refine within ±2 pixels at every finer level. Alignment uses pixel-value NCC.
+        </p>
+        <div className="result-grid">
+          {pyramidResults.map((result) => (
+            <article className={`result-card${result.status === 'failure' ? ' failed' : ''}`} key={result.file}>
+              <figure>
+                <img src={asset(`/images/pyramid/${result.file}`)} alt={`${result.name} pyramid alignment`} />
+              </figure>
+              <div className="card-caption">
+                <h3>
+                  {result.name}
+                  {result.status === 'failure' && <span className="status">failed</span>}
+                </h3>
+                <Offsets green={result.green} red={result.red} />
+              </div>
+            </article>
+          ))}
         </div>
+        <aside className="failure-note">
+          <strong>Emir is the allowed failure.</strong> The robe is a bright, nearly uniform blue, so the three
+          channels do not share the same intensity pattern. Pixel-value NCC still finds a reasonable green offset, but
+          the red channel locks onto a false peak at (−455, 416). The other 13 course images align cleanly.
+        </aside>
+        <table className="offset-table">
+          <caption>Offsets relative to blue, reported as (x, y)</caption>
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Green</th>
+              <th>Red</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pyramidResults.map((result) => (
+              <tr key={result.file} className={result.status === 'failure' ? 'failed-row' : undefined}>
+                <td>
+                  {result.name}
+                  {result.status === 'failure' ? ' (failed)' : ''}
+                </td>
+                <td>{result.green}</td>
+                <td>{result.red}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </section>
 
       <section id="collection" className="section shell">
-        <div className="section-heading">
-          <div>
-            <p className="section-number">04 · Personal selections</p>
-            <h2>More from the collection</h2>
-          </div>
-          <p>Three additional Library of Congress glass plates, aligned with the same NCC pyramid.</p>
-        </div>
+        <p className="section-number">04 · Personal selections</p>
+        <h2>More from the collection</h2>
+        <p className="lede">
+          Three additional Library of Congress glass plates, aligned with the same NCC pyramid and the same parameters.
+        </p>
         <div className="extra-grid">
           {extraResults.map((result) => (
-            <article className="extra-card" key={result.file}>
+            <article className="result-card" key={result.file}>
               <figure>
                 <img src={asset(`/images/extras/${result.file}`)} alt={`${result.name} color reconstruction`} />
               </figure>
-              <div className="extra-caption">
+              <div className="card-caption">
                 <h3>{result.name}</h3>
                 <Offsets green={result.green} red={result.red} />
                 <a href={result.source} target="_blank" rel="noreferrer">
-                  View source plate ↗
+                  LoC source
                 </a>
               </div>
             </article>
@@ -213,7 +206,7 @@ export default function App() {
 
       <footer className="footer shell">
         <p>CS 180 · Intro to Computer Vision and Computational Photography</p>
-        <a href="#top">Back to top ↑</a>
+        <p className="print-url">https://jiaweitang22.github.io/cs180-proj1/</p>
       </footer>
     </main>
   );
