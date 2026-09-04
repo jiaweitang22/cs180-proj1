@@ -227,7 +227,7 @@ h2 { font-size: clamp(36px, 4.2vw, 50px); line-height: 1.14; }
   .single-copy, .pyramid-copy { margin-bottom: 16pt; }
   .single-copy p, .pyramid-copy p { font-size: 9pt; }
   .single-copy p + p, .pyramid-copy p + p { margin-top: 8pt; }
-  .single-pseudocode { margin-bottom: 18pt; padding: 12pt; font-size: 7.5pt; line-height: 1.55; }
+  .single-pseudocode { margin-bottom: 18pt; padding: 12pt; font-size: 7.5pt; line-height: 1.55; break-inside: avoid; }
   .pyramid-explainer { gap: 18pt; margin-bottom: 16pt; }
   .pyramid-explainer li { grid-template-columns: 52pt 1fr; gap: 6pt; padding: 6pt 0; font-size: 8pt; }
   .pyramid-explainer pre { padding: 12pt; font-size: 7.5pt; line-height: 1.55; }
