@@ -88,8 +88,8 @@ h1 { font-size: clamp(54px, 7vw, 88px); line-height: .98; }
 .section-heading .kicker { margin-bottom: 14px; }
 h2 { max-width: 760px; font-size: clamp(38px, 4.6vw, 58px); line-height: 1.08; }
 .section-heading > p:last-child { max-width: 670px; margin-top: 20px; color: var(--muted); }
-.split-heading { max-width: none; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; }
-.split-heading > p:last-child { margin: 0; }
+.split-heading { max-width: 820px; display: block; }
+.split-heading > p:last-child { margin-top: 22px; }
 
 .pipeline { list-style: none; margin: 0 0 72px; padding: 0; border-top: 1px solid var(--ink); }
 .pipeline li { display: grid; grid-template-columns: 64px 170px 1fr; gap: 28px; align-items: baseline; padding: 22px 0; border-bottom: 1px solid var(--line); }
@@ -117,11 +117,11 @@ h2 { max-width: 760px; font-size: clamp(38px, 4.6vw, 58px); line-height: 1.08; }
 .offset-line { display: flex; flex-wrap: wrap; gap: 6px 20px; color: var(--muted); font-size: 16px; font-weight: 550; font-variant-numeric: tabular-nums; }
 .comparison-header .offset-line { margin-top: 8px; }
 
-.pyramid-explainer { display: grid; grid-template-columns: 1.08fr .92fr; gap: 72px; align-items: start; margin: 0 0 104px; }
-.pyramid-explainer ol { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
-.pyramid-explainer li { padding: 20px 0 20px 130px; position: relative; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 16px; }
-.pyramid-explainer li span { position: absolute; left: 0; color: var(--ink); font-weight: 700; }
-.pyramid-explainer pre { margin: 0; padding: 34px; overflow-x: auto; background: var(--dark); color: #e9eee8; border-radius: 12px; font-size: 15px; line-height: 1.9; }
+.pyramid-explainer { margin: 0 0 104px; }
+.pyramid-explainer ol { display: grid; grid-template-columns: 1fr 1fr; gap: 0 42px; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+.pyramid-explainer li { display: grid; grid-template-columns: 110px 1fr; gap: 18px; padding: 24px 0; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 16px; }
+.pyramid-explainer li span { color: var(--ink); font-weight: 700; }
+.pyramid-explainer pre { margin: 30px 0 0; padding: 34px 40px; overflow-x: auto; background: var(--dark); color: #e9eee8; border-radius: 12px; font-size: 15px; line-height: 1.9; }
 .subsection-heading { display: flex; justify-content: space-between; gap: 40px; align-items: end; margin-bottom: 28px; }
 .subsection-heading h3 { margin-top: 5px; font-size: 34px; }
 .subsection-heading > p { max-width: 420px; color: var(--muted); font-size: 16px; text-align: right; }
@@ -155,14 +155,14 @@ h2 { max-width: 760px; font-size: clamp(38px, 4.6vw, 58px); line-height: 1.08; }
 @media (max-width: 820px) {
   .shell, .site-header { width: min(100% - 36px, 1120px); }
   .hero { padding: 64px 0 56px; }
-  .hero-copy, .intro, .split-heading, .pyramid-explainer, .failure-analysis { grid-template-columns: 1fr; gap: 32px; }
+  .hero-copy, .intro, .failure-analysis { grid-template-columns: 1fr; gap: 32px; }
   .hero-copy .kicker { margin-bottom: -18px; }
   .summary { max-width: 600px; }
   .intro { gap: 40px; }
   .section { padding: 76px 0; }
-  .split-heading { align-items: start; }
   .pipeline li { grid-template-columns: 42px 130px 1fr; gap: 16px; }
   .pyramid-explainer { margin-bottom: 76px; }
+  .pyramid-explainer ol { grid-template-columns: 1fr; }
   .failure-image img { min-height: 0; }
 }
 
@@ -185,7 +185,7 @@ h2 { max-width: 760px; font-size: clamp(38px, 4.6vw, 58px); line-height: 1.08; }
   .results-grid { gap: 22px; }
   .subsection-heading { display: block; }
   .subsection-heading > p { margin-top: 10px; text-align: left; }
-  .pyramid-explainer li { padding-left: 100px; }
+  .pyramid-explainer li { grid-template-columns: 92px 1fr; }
   .failure-analysis { margin-top: 72px; }
   .failure-copy { padding: 36px 26px; }
   .footer { align-items: flex-start; flex-direction: column; justify-content: center; gap: 8px; }
@@ -219,7 +219,7 @@ h2 { max-width: 760px; font-size: clamp(38px, 4.6vw, 58px); line-height: 1.08; }
   .comparison h3 { font-size: 14pt; }
   .comparison-images { gap: 7pt; }
   .pyramid-explainer { gap: 18pt; margin-bottom: 24pt; }
-  .pyramid-explainer li { padding: 6pt 0 6pt 62pt; font-size: 8pt; }
+  .pyramid-explainer li { grid-template-columns: 52pt 1fr; gap: 6pt; padding: 6pt 0; font-size: 8pt; }
   .pyramid-explainer pre { padding: 12pt; font-size: 7.5pt; line-height: 1.55; }
   .results-grid { grid-template-columns: repeat(3, 1fr); gap: 16pt 8pt; }
   .result-figure, .collection-grid > article, .failure-analysis { break-inside: avoid; }
