@@ -116,7 +116,7 @@ export default function App() {
         <ol className="pipeline">
           <li><span>01</span><div><h3>Separate</h3><p>Divide the plate vertically into equal B, G, and R exposures and convert pixel values to floating point.</p></div></li>
           <li><span>02</span><div><h3>Search</h3><p>Shift green and red independently over candidate integer offsets, always comparing them with blue.</p></div></li>
-          <li><span>03</span><div><h3>Score</h3><p>Evaluate L2 or NCC on the interior 80% of the images, avoiding the high-contrast plate borders.</p></div></li>
+          <li><span>03</span><div><h3>Score</h3><p>Evaluate L2 or NCC on the central 80% of each image dimension, excluding 10% from every edge and avoiding the high-contrast plate borders.</p></div></li>
           <li><span>04</span><div><h3>Reconstruct</h3><p>Apply the best shifts, stack the channels in RGB order, remove wrapped regions, and trim 10% for display.</p></div></li>
         </ol>
 
@@ -156,7 +156,7 @@ export default function App() {
           <p>
             For each moving channel, I test every <strong>(x, y)</strong> translation from −15 through +15 in both
             directions—a 31 × 31 grid, or 961 candidates. I shift the channel with a circular array roll and compare
-            it with blue using only the interior 80% of both images. Excluding the outer 10% on every side reduces the
+            it with blue using only the central 80% of each image dimension. Excluding the outer 10% on every side reduces the
             influence of the glass-plate borders and of pixels wrapped around by the shift.
           </p>
           <p>
@@ -207,15 +207,16 @@ export default function App() {
 
         <div className="pyramid-copy">
           <p>
-            On <em>church.tif</em>, red sits 58 pixels below blue. Checking every shift that large on a 3200 × 3600
+            On <em>church.tif</em>, aligning red to blue requires shifting red 58 pixels down and 4 pixels left. Checking every shift that large on a 3200 × 3600
             image is a slog: a ±60 window is more than 14,000 comparisons at full resolution. The workaround is
             familiar from looking at a photo on your phone. Find the alignment on a tiny copy, then only make small
             corrections as the image gets sharp again.
           </p>
           <p>
-            I build that stack of copies myself by shrinking each channel in half with anti-aliasing until the long side
-            is at most 200 pixels. Church bottoms out at a 100 × 114 thumbnail—six scales in all. The same matcher
-            implementation supports either L2 or NCC at every scale, and scores only the interior 80%.
+            I build that stack of copies myself by smoothing each channel before shrinking it in half with anti-aliasing;
+            this reduces aliasing and preserves reliable coarse structure. I repeat until the long side is at most 200
+            pixels. Church bottoms out at a 100 × 114 thumbnail—six scales in all. The same matcher implementation
+            supports either L2 or NCC at every scale, and scores only the central 80% of each image dimension.
             The glass-plate borders are high-contrast frames that do not agree across blue, green, and red, and rolling
             a channel wraps leftover pixels onto that edge. Scoring the middle reduces the influence of both.
           </p>
