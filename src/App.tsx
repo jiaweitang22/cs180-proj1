@@ -67,6 +67,14 @@ export default function App() {
 
   return (
     <main id="top">
+      <nav className="project-nav" aria-label="Projects">
+        <a href="https://jiaweitang22.github.io/">Home</a>
+        <a href="https://jiaweitang22.github.io/cs180-proj0/">Project 0</a>
+        <a href="https://jiaweitang22.github.io/cs180-proj1/" aria-current="page">Project 1</a>
+        <a href="https://jiaweitang22.github.io/cs180-proj2/">Project 2</a>
+        <a href="https://jiaweitang22.github.io/cs180-proj3/">Project 3</a>
+        <a href="https://jiaweitang22.github.io/cs180-proj4/">Project 4</a>
+      </nav>
       <header className="site-header">
         <a className="wordmark" href="#top">CS 180 <span>· Project 1</span></a>
         <nav aria-label="Project sections">
